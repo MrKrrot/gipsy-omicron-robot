@@ -48,7 +48,7 @@ pneumatics ValveArm2=pneumatics(Brain.ThreeWirePort.B);
 
 bumper BumperFrontal=bumper(Brain.ThreeWirePort.H);
 
-motor PXNDX=motor(PORT5,ratio18_1,true);
+motor MotorRiel=motor(PORT5,ratio18_1,true);
 
 bool active=false, sentido=false;
 
@@ -85,9 +85,9 @@ void ManoSetup(int v, int t){
 }
 
 void BandaSetUp(int v, int t){
-  PXNDX.setVelocity(v, percent);
-  PXNDX.setMaxTorque(t,percent);
-  PXNDX.setStopping(hold);
+  MotorRiel.setVelocity(v, percent);
+  MotorRiel.setMaxTorque(t,percent);
+  MotorRiel.setStopping(hold);
 }
 
 void ResetEvery(){
@@ -318,12 +318,12 @@ void BandaMov(){
 
   if(active==true){
       if(sentido==true){
-        PXNDX.spin(forward);
+        MotorRiel.spin(forward);
       }else{
-        PXNDX.spin(reverse);
+        MotorRiel.spin(reverse);
       }
   }else {
-    PXNDX.stop();
+    MotorRiel.stop();
   }
 
   if(Control.ButtonUp.pressing()){
