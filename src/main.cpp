@@ -17,47 +17,53 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 brain Brain;
-controller Control=controller(primary);
+controller Control = controller(primary);
+/*--| MOTORES |--*/
+// Motores Izquierda
+motor MotorL1 = motor(PORT11, ratio6_1, false);
+motor MotorL2 = motor(PORT12, ratio6_1, false);
+motor MotorL3 = motor(PORT15, ratio6_1, true);
+motor MotorL4 = motor(PORT13, ratio6_1, false);
+motor_group MotoresL = motor_group(MotorL1, MotorL2, MotorL3, MotorL4);
 
-motor MotorL1=motor(PORT11,ratio36_1,false);
-motor MotorL2=motor(PORT12,ratio36_1,true);
-motor MotorL3=motor(PORT13,ratio36_1,false);
-motor_group MotoresL=motor_group(MotorL1,MotorL2,MotorL3);
+// Motores Derecha
+motor MotorR1 = motor(PORT20, ratio6_1, true);
+motor MotorR2 = motor(PORT19, ratio6_1, true);
+motor MotorR3 = motor(PORT16, ratio6_1, false);
+motor MotorR4 = motor(PORT18, ratio6_1, true);
+motor_group MotoresR = motor_group(MotorR1, MotorR2, MotorR3, MotorR4);
 
-motor MotorR1=motor(PORT20,ratio36_1,true);
-motor MotorR2=motor(PORT19,ratio36_1,false);
-motor MotorR3=motor(PORT18,ratio36_1,true);
-motor_group MotoresR=motor_group(MotorR1,MotorR2,MotorR3);
+// Motores Brazos
+motor BrazoR = motor(PORT7, ratio36_1, false);
+motor BrazoL = motor(PORT1, ratio36_1, true);
+motor_group Brazo = motor_group(BrazoR, BrazoL);
+motor BrazoBack = motor(PORT9, ratio36_1, false);
+motor Garra = motor(PORT4, ratio36_1, true);
+motor MotorRiel = motor(PORT5, ratio18_1, true);
 
-inertial SensorInethial=inertial(PORT3);
+/*--| SENSORES |--*/
+// Sensores
+inertial SensorInethial = inertial(PORT3);
+rotation SensorDeRotL = rotation(PORT14, true);
+distance SensorDeDistancia = distance(PORT8);
 
-smartdrive Drivetrain=smartdrive(MotoresL,MotoresR,SensorInethial, 319.19 , 368.3 , 406.4 , mm , 1 );
+// Otros sensores
+bumper BumperFrontal = bumper(Brain.ThreeWirePort.H);
+pneumatics ValveArm1 = pneumatics(Brain.ThreeWirePort.A);
+pneumatics ValveArm2 = pneumatics(Brain.ThreeWirePort.B);
 
-motor BrazoR=motor(PORT7,ratio36_1,false);
-motor BrazoL=motor(PORT1,ratio36_1,true);
-motor_group Brazo=motor_group(BrazoR,BrazoL);
-motor Garra=motor(PORT4,ratio36_1,true);
+// Drivetrain
+smartdrive Drivetrain = smartdrive(MotoresL, MotoresR, SensorInethial, 319.19 , 368.3 , 406.4 , mm , 1);
 
-motor BrazoBack=motor(PORT9,ratio36_1,false);
-rotation SensorDeRotL=rotation(PORT14,true);
-
-distance SensorDeDistancia=distance(PORT8);
-
-pneumatics ValveArm1=pneumatics(Brain.ThreeWirePort.A);
-pneumatics ValveArm2=pneumatics(Brain.ThreeWirePort.B);
-
-bumper BumperFrontal=bumper(Brain.ThreeWirePort.H);
-
-motor MotorRiel=motor(PORT5,ratio18_1,true);
-
-bool active=false, sentido=false;
+bool active = false, 
+     sentido = false;
 
 void BaseSetUp(int v, int t){
   MotoresL.setVelocity(v, percent);
-  MotoresL.setMaxTorque(t,percent);
+  MotoresL.setMaxTorque(t, percent);
   MotoresL.setStopping(hold);
   MotoresR.setVelocity(v, percent);
-  MotoresR.setMaxTorque(t,percent);
+  MotoresR.setMaxTorque(t, percent);
   MotoresR.setStopping(hold);
 }
 
@@ -69,24 +75,24 @@ void DriveSetUp(int v, int r){
 
 void BrazosSetUp(int v, int t){
   BrazoBack.setVelocity(v, percent);
-  BrazoBack.setMaxTorque(t,percent);
+  BrazoBack.setMaxTorque(t, percent);
   BrazoBack.setStopping(hold);
 
 }
 
 void ManoSetup(int v, int t){
   Brazo.setVelocity(v, percent);
-  Brazo.setMaxTorque(t,percent);
+  Brazo.setMaxTorque(t, percent);
   Brazo.setStopping(hold);
 
   Garra.setVelocity(v, percent);
-  Garra.setMaxTorque(t,percent);
+  Garra.setMaxTorque(t, percent);
   Garra.setStopping(hold);
 }
 
 void BandaSetUp(int v, int t){
   MotorRiel.setVelocity(v, percent);
-  MotorRiel.setMaxTorque(t,percent);
+  MotorRiel.setMaxTorque(t, percent);
   MotorRiel.setStopping(hold);
 }
 
@@ -123,14 +129,14 @@ void pre_auton(void) {
 void BrazosBackMovAut(bool i){
   while(1){
     if(i==1){
-      if(SensorDeRotL.position(degrees)<=93){
+      if(SensorDeRotL.position(degrees) <= 93){
         BrazoBack.spin(reverse);
       }else {
         BrazoBack.stop();
         break;
       }
     }else {
-      if(SensorDeRotL.position(degrees)>=50){
+      if(SensorDeRotL.position(degrees) >= 50){
         BrazoBack.spin(forward);
       }else {
         BrazoBack.stop();
@@ -152,14 +158,14 @@ void PistonesAutom(bool L){
 }
 
 void AvanzeDistanciaBase(int i){
-  while(SensorDeDistancia.objectDistance(mm)<=i){
+  while(SensorDeDistancia.objectDistance(mm) <= i){
     Drivetrain.drive(forward);
   }
   Drivetrain.stop();
 }
 
 void RetrocesoDistanciaBase(int i){
-  while(SensorDeDistancia.objectDistance(mm)>=i){
+  while(SensorDeDistancia.objectDistance(mm) >= i){
     Drivetrain.drive(reverse);
   }
   Drivetrain.stop();
@@ -167,7 +173,7 @@ void RetrocesoDistanciaBase(int i){
 
 void AvanzeBumperLimitAutom(int i){
   PistonesAutom(0);
-  while(!BumperFrontal.pressing()&&SensorDeDistancia.objectDistance(mm)<=i){
+  while(!BumperFrontal.pressing() && SensorDeDistancia.objectDistance(mm) <= i){
     Drivetrain.drive(forward);
   }
   Drivetrain.stop(hold);
@@ -181,9 +187,9 @@ void AvanzeBumperAutom(){
 }
 
 void AutonomoGarra(){
-  while(!BumperFrontal.pressing()&&SensorDeDistancia.objectDistance(mm)<=1600){
+  while(!BumperFrontal.pressing() && SensorDeDistancia.objectDistance(mm) <= 1600){
     Drivetrain.drive(forward);
-    if(MotoresL.rotation(degrees)>650){
+    if(MotoresL.rotation(degrees) > 650){
       DriveSetUp(40, 100);
     }
   }
@@ -195,14 +201,14 @@ void AutonomoGarra(){
     Garra.setTimeout(1000, msec);
     Garra.spinFor(reverse, 300, degrees);//150
     Garra.spin(reverse);
-    Brazo.spinFor(forward,200,degrees);
+    Brazo.spinFor(forward, 200, degrees);
     Drivetrain.stop();
     DriveSetUp(100, 100);
     Garra.stop();
-    Drivetrain.driveFor(reverse,5,inches);
-    Brazo.spinFor(reverse,100,degrees);
+    Drivetrain.driveFor(reverse, 5, inches);
+    Brazo.spinFor(reverse, 100, degrees);
     Drivetrain.setTurnVelocity(5, percent);
-    Drivetrain.turnFor(left,45,degrees);
+    Drivetrain.turnFor(left, 45, degrees);
     Drivetrain.turnToHeading(315, degrees);
     PistonesAutom(0);
     BrazosBackMovAut(1);
@@ -211,13 +217,13 @@ void AutonomoGarra(){
     PistonesAutom(1);
     BrazosBackMovAut(0);
 
-    Drivetrain.turnFor(right,45,degrees);
+    Drivetrain.turnFor(right, 45, degrees);
     Drivetrain.turnToHeading(0, degrees);
-    Drivetrain.driveFor(reverse,15,inches);
+    Drivetrain.driveFor(reverse, 15, inches);
     /*********************/
   }else {
     DriveSetUp(100, 100);
-    Drivetrain.driveFor(reverse,20,inches);
+    Drivetrain.driveFor(reverse, 20, inches);
   }
 }
 
@@ -355,10 +361,10 @@ void usercontrol(void) {
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
     // values based on feedback from the joysticks.
-    BaseSetUp(80, 100);
+    BaseSetUp(100, 100);
     BrazosSetUp(100, 100);
     ManoSetup(100, 100);
-    BandaSetUp(80, 100);
+    BandaSetUp(100, 100);
     
     MovL();
     MovR();
