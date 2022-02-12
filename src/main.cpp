@@ -9,18 +9,14 @@
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // ---- END VEXCODE CONFIGURED DEVICES ----
-#include "devices/base_motors.h"
-#include "devices/hands_motors.h"
-#include "devices/sensors.h"
+#include "devices/base.h"
 #include "vex.h"
-
 #include "functions/autonomous/autonomousGarra.h"
 #include "functions/autonomous/bandaSetup.h"
 #include "functions/autonomous/baseSetup.h"
 #include "functions/autonomous/brazosSetup.h"
 #include "functions/autonomous/driveSetup.h"
 #include "functions/autonomous/manoSetup.h"
-#include "functions/autonomous/pistonesAutom.h"
 #include "functions/autonomous/resetEvery.h"
 
 bool active = false, sentido = false;
@@ -44,41 +40,15 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void RetrocesoDistanciaBase(int i) {
-  while (SensorDeDistancia.objectDistance(mm) >= i) {
-    Drivetrain.drive(reverse);
-  }
-  Drivetrain.stop();
-}
-
-void AvanzeBumperLimitAutom(int i) {
-  pistonesAutom(0);
-  while (!BumperFrontal.pressing() &&
-         SensorDeDistancia.objectDistance(mm) <= i) {
-    Drivetrain.drive(forward);
-  }
-  Drivetrain.stop(hold);
-}
-
-void AvanzeBumperAutom() {
-  while (!BumperFrontal.pressing()) {
-    Drivetrain.drive(forward);
-  }
-  Drivetrain.stop(hold);
-}
-
 void autonomous(void) {
   driveSetup(100, 10);
   manoSetup(100, 100);
   brazosSetup(100, 100);
   resetEvery();
   autonomousGarra();
-  // AutonomoGarraCenter();
-  // Skills2();
 }
 
 void MovL() {
-  // MotoresL.spin(forward,Control.Axis3.value(),percent);
 
   if (Control.Axis3.value() > 10) {
     MotoresL.spin(forward, Control.Axis3.value(), percent);

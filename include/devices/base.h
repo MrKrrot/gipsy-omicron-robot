@@ -1,6 +1,5 @@
 #pragma once
 #include "vex.h"
-
 /*--| MOTORES |--*/
 // Motores Izquierda
 motor MotorL1 = motor(PORT11, ratio6_1, false);
@@ -15,3 +14,11 @@ motor MotorR2 = motor(PORT19, ratio6_1, true);
 motor MotorR3 = motor(PORT16, ratio6_1, false);
 motor MotorR4 = motor(PORT18, ratio6_1, true);
 motor_group MotoresR = motor_group(MotorR1, MotorR2, MotorR3, MotorR4);
+
+// Motores Brazos
+motor Garra = motor(PORT4, ratio36_1, true);
+motor BrazoBack = motor(PORT9, ratio36_1, false);
+motor BrazoR = motor(PORT7, ratio36_1, false);
+motor BrazoL = motor(PORT1, ratio36_1, true);
+motor_group Brazo = motor_group(BrazoR, BrazoL);
+motor MotorRiel = motor(PORT5, ratio18_1, true);

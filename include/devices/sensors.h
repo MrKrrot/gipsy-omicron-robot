@@ -1,12 +1,6 @@
 #pragma once
 #include "vex.h"
-#include "base_motors.h"
-// A global instance of competition
-competition Competition;
-brain Brain;
-controller Control = controller(primary);
-
-/*--| SENSORES |--*/
+#include "devices/base.h"
 // Sensores
 inertial SensorInethial = inertial(PORT3);
 rotation SensorDeRotL = rotation(PORT14, true);
