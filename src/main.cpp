@@ -21,6 +21,7 @@
 
 bool active = false, sentido = false;
 
+
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
@@ -41,11 +42,25 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  driveSetup(100, 10);
-  manoSetup(100, 100);
+  Drivetrain.driveFor(forward, 49, inches);
+  Valve1.set(0);
+  Drivetrain.driveFor(reverse, 40, inches);
+  Drivetrain.setTurnVelocity(20, percent);
+  Drivetrain.turnToRotation(-90, degrees);
+  Drivetrain.driveFor(reverse, 10, inches);
+  ValveArm1.set(0);
+  /* manoSetup(100, 100);
   brazosSetup(100, 100);
   resetEvery();
-  autonomousGarra();
+  autonomousGarra(); */
+}
+
+void changeValvula() {
+  if(Control.ButtonX.pressing()) {
+    ValveArm1.set(true);
+  } else if(Control.ButtonB.pressing()) {
+    ValveArm1.set(false);
+  }
 }
 
 void MovL() {
@@ -90,26 +105,24 @@ void ManoMov() {
   }
 }
 
-void GarraMov() {
-  if (Control.ButtonX.pressing()) {
-    Garra.spin(forward);
-  } else if (Control.ButtonB.pressing()) {
-    Garra.spin(reverse);
-  } else {
-    Garra.stop();
+void GanchosCerrojo() {
+  if (Control.ButtonUp.pressing()) {
+    Valve1.set(true);
+    wait(800, msec);
+  }
+  if (Control.ButtonDown.pressing()) {
+    Valve1.set(false);
+    wait(800, msec);
   }
 }
 
-void GanchosCerrojo() {
+void OtraValvula() {
   if (Control.ButtonY.pressing()) {
-    ValveArm1.set(true);
-    ValveArm2.set(false);
-
+    ValveArm2.set(true);
     wait(800, msec);
   }
   if (Control.ButtonA.pressing()) {
-    ValveArm1.set(false);
-    ValveArm2.set(true);
+    ValveArm2.set(false);
     wait(800, msec);
   }
 }
@@ -151,7 +164,7 @@ void usercontrol(void) {
   MotoresL.setStopping(hold);
   MotoresL.stop(hold);
   // User control code here, inside the loop
-  while (1) {
+  while (1) {                                                                                                                    
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
     // values based on feedback from the joysticks.
@@ -159,13 +172,13 @@ void usercontrol(void) {
     brazosSetup(100, 100);
     manoSetup(100, 100);
     bandaSetup(100, 100);
-
+    changeValvula();
     MovL();
     MovR();
     BrazoBackMov();
     GanchosCerrojo();
+    OtraValvula();
     ManoMov();
-    GarraMov();
     BandaMov();
     // ........................................................................
     // Insert user code here. This is where you use the joystick values to
